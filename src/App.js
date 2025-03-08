@@ -47,13 +47,11 @@ const App = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Fetch city suggestions from OpenWeatherMap Geolocation API
   const fetchCitySuggestions = async (query) => {
     if (!query) {
       setSuggestions([]);
       return;
     }
-
     try {
       const response = await fetch(
         `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
@@ -72,26 +70,22 @@ const App = () => {
     }
   };
 
-  // Fetch weather data based on the selected city
   const fetchWeather = async (cityName) => {
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API_KEY}`
       );
       const data = await response.json();
-
       if (data.cod === 200) {
         const description = data.weather[0].description.toLowerCase();
         setWeather({
           city: `${data.name}, ${data.sys.country}`,
           temperature: `${Math.round(data.main.temp)}°C`,
           description,
-          humidity: `${data.main.humidity}%`,
-          wind: `${data.wind.speed} m/s`,
+          humidity: data.main.humidity,
+          wind: data.wind.speed,
           icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
         });
-
-        // Update background video and theme based on weather
         setVideoSrc(weatherVideos[description] || clearSkyVideo);
         setTheme(weatherThemes[description] || 'clear');
       } else {
@@ -106,24 +100,27 @@ const App = () => {
     if (city) fetchWeather(city);
   }, [city]);
 
+  useEffect(() => {
+    const videoElement = document.querySelector(".background-media");
+    if (videoElement && videoElement.tagName === "VIDEO") {
+      videoElement.play().catch(error => console.log("Autoplay blocked:", error));
+    }
+  }, [videoSrc]);
+
   return (
     <div className={`app-container ${theme}`}>
-      {/* Video Background */}
-<div className="background-container">
-  {videoSrc.endsWith('.gif') ? (
-    <img src={videoSrc} alt="Weather Background" className="background-media gif" />
-  ) : (
-    <video autoPlay loop muted key={videoSrc} className="background-media">
-      <source src={videoSrc} type="video/mp4" />
-    </video>
-  )}
-</div>
+      <div className="background-container">
+        {videoSrc.endsWith('.gif') ? (
+          <img src={videoSrc} alt="Weather Background" className="background-media gif" />
+        ) : (
+          <video autoPlay loop muted key={videoSrc} className="background-media">
+            <source src={videoSrc} type="video/mp4" />
+          </video>
+        )}
+      </div>
 
-      
       <div className="weather-box">
         <h1 className="app-title">Weather App</h1>
-        
-        {/* Search Input */}
         <input
           type="text"
           className="city-input"
@@ -134,37 +131,17 @@ const App = () => {
           }}
           placeholder="Enter city name..."
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 500)}
         />
 
-        {/* Suggestions Dropdown */}
-        {showSuggestions && suggestions.length > 0 && (
-          <ul className="suggestions-dropdown">
-            {suggestions.map((suggestion, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  setCity(suggestion.name);
-                  fetchWeather(suggestion.name);
-                  setShowSuggestions(false);
-                }}
-              >
-                {suggestion.name}, {suggestion.country}
-              </li>
-            ))}
-          </ul>
-        )}
-        
         {weather && (
           <div className="weather-info">
             <h2 className="city-name">{weather.city}</h2>
             <img src={weather.icon} alt="Weather Icon" className="weather-icon" />
-            <p className="temperature">{weather.temperature}</p>
+            <p className={`temperature ${theme}`}>{weather.temperature}</p>
             <p className="weather-description">{weather.description}</p>
-            <div className="weather-details">
-              <p>Humidity: {weather.humidity}</p>
-              <p>Wind: {weather.wind}</p>
-            </div>
+            <p className="humidity" data-level="moderate">Humidity: {weather.humidity}%</p>
+            <p className="wind" data-level="moderate">Wind: {weather.wind} m/s</p>
           </div>
         )}
       </div>
