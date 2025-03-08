@@ -124,14 +124,26 @@ const App = () => {
   useEffect(() => {
     if (city) fetchWeather(city);
   }, [city]);
+  useEffect(() => {
+    if (city) fetchWeather(city);
+  }, [city]);
 
+  useEffect(() => {
+    const video = document.querySelector(".background-media");
+    if (video) {
+      video.addEventListener("pause", () => {
+        video.play(); // Force play if paused
+      });
+    }
+  }, [videoSrc]);
+  
   return (
     <div className={`app-container ${theme}`}>
       <div className="background-container">
         {videoSrc.endsWith('.gif') ? (
           <img src={videoSrc} alt="Weather Background" className="background-media gif" />
         ) : (
-          <video autoPlay loop muted key={videoSrc} className="background-media">
+          <video autoPlay loop muted key={videoSrc} className="background-media" playsInline>
             <source src={videoSrc} type="video/mp4" />
           </video>
         )}

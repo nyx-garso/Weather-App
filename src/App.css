@@ -47,6 +47,8 @@ body, html {
   height: 100%;
   object-fit: cover; /* Ensures full coverage */
   transform: translate(-50%, -50%);
+  pointer-events: none; /* Prevents user interaction */
+  user-select: none; /* Prevents selection */
 }
 
 .background-media.gif {
