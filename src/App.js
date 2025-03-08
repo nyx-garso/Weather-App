@@ -12,6 +12,7 @@ const API_KEY = 'b0cca6bfbb92130cd2bafa496f377b08';
 const weatherThemes = {
   'clear sky': 'clear',
   'few clouds': 'cloudy',
+  'overcast clouds': 'cloudy',
   'scattered clouds': 'cloudy',
   'broken clouds': 'cloudy',
   'moderate rain': 'rainy',
@@ -28,6 +29,7 @@ const weatherThemes = {
 
 const weatherVideos = {
   'clear sky': clearSkyVideo,
+  'overcast clouds': cloudsVideo,
   'few clouds': cloudsVideo,
   'scattered clouds': cloudsVideo,
   'broken clouds': cloudsVideo,
