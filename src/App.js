@@ -14,6 +14,8 @@ const weatherThemes = {
   'few clouds': 'cloudy',
   'scattered clouds': 'cloudy',
   'broken clouds': 'cloudy',
+  'moderate rain': 'rainy',
+  'light rain': 'rainy',
   'shower rain': 'rainy',
   'rain': 'rainy',
   'thunderstorm': 'rainy',
@@ -29,6 +31,8 @@ const weatherVideos = {
   'few clouds': cloudsVideo,
   'scattered clouds': cloudsVideo,
   'broken clouds': cloudsVideo,
+  'moderate rain': rainVideo,
+  'light rain': rainVideo,
   'shower rain': rainVideo,
   'rain': rainVideo,
   'thunderstorm': thunderstormVideo,
@@ -47,11 +51,13 @@ const App = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  // Fetch city suggestions from OpenWeatherMap Geolocation API
   const fetchCitySuggestions = async (query) => {
     if (!query) {
       setSuggestions([]);
       return;
     }
+
     try {
       const response = await fetch(
         `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
@@ -76,16 +82,32 @@ const App = () => {
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API_KEY}`
       );
       const data = await response.json();
+      
       if (data.cod === 200) {
+        const temperature = Math.round(data.main.temp);
         const description = data.weather[0].description.toLowerCase();
+        
+        let tempClass = 'cold';
+        if (temperature > 30) tempClass = 'hot';
+        else if (temperature > 20) tempClass = 'warm';
+        else if (temperature > 10) tempClass = 'cool';
+
         setWeather({
           city: `${data.name}, ${data.sys.country}`,
-          temperature: `${Math.round(data.main.temp)}°C`,
+          temperature: `${temperature}°C`,
           description,
-          humidity: data.main.humidity,
-          wind: data.wind.speed,
+          humidity: `${data.main.humidity}%`,
+          wind: `${data.wind.speed} m/s`,
           icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+          temperatureClass: tempClass,
+          humidityLevel:
+            data.main.humidity < 40 ? 'low' :
+            data.main.humidity < 70 ? 'moderate' : 'high',
+          windLevel:
+            data.wind.speed < 3 ? 'low' :
+            data.wind.speed < 8 ? 'moderate' : 'high',
         });
+
         setVideoSrc(weatherVideos[description] || clearSkyVideo);
         setTheme(weatherThemes[description] || 'clear');
       } else {
@@ -100,13 +122,6 @@ const App = () => {
     if (city) fetchWeather(city);
   }, [city]);
 
-  useEffect(() => {
-    const videoElement = document.querySelector(".background-media");
-    if (videoElement && videoElement.tagName === "VIDEO") {
-      videoElement.play().catch(error => console.log("Autoplay blocked:", error));
-    }
-  }, [videoSrc]);
-
   return (
     <div className={`app-container ${theme}`}>
       <div className="background-container">
@@ -118,7 +133,6 @@ const App = () => {
           </video>
         )}
       </div>
-
       <div className="weather-box">
         <h1 className="app-title">Weather App</h1>
         <input
@@ -131,17 +145,43 @@ const App = () => {
           }}
           placeholder="Enter city name..."
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 500)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
 
+        {showSuggestions && suggestions.length > 0 && (
+          <ul className="suggestions-dropdown">
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                onClick={() => {
+                  setCity(suggestion.name);
+                  fetchWeather(suggestion.name);
+                  setShowSuggestions(false);
+                }}
+              >
+                {suggestion.name}, {suggestion.country}
+              </li>
+            ))}
+          </ul>
+        )}
+        
         {weather && (
           <div className="weather-info">
             <h2 className="city-name">{weather.city}</h2>
-            <img src={weather.icon} alt="Weather Icon" className="weather-icon" />
-            <p className={`temperature ${theme}`}>{weather.temperature}</p>
-            <p className="weather-description">{weather.description}</p>
-            <p className="humidity" data-level="moderate">Humidity: {weather.humidity}%</p>
-            <p className="wind" data-level="moderate">Wind: {weather.wind} m/s</p>
+            <div className="weather-description-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%' }}>
+              <img src={weather.icon} alt="Weather Icon" className="weather-icon" style={{ marginRight: '10px' }} />
+              <p className="weather-description" style={{ textAlign: 'left' }}>{weather.description}</p>
+            </div>
+            <p className={`temperature ${weather.temperatureClass}`}>{weather.temperature}</p>
+            <div className="color-range temperature-range"></div>
+            <p className="humidity" data-level={weather.humidityLevel}>
+              Humidity: {weather.humidity}
+            </p>
+            <div className="color-range humidity-range"></div>
+            <p className="wind" data-level={weather.windLevel}>
+              Wind: {weather.wind}
+            </p>
+            <div className="color-range wind-range"></div>
           </div>
         )}
       </div>
