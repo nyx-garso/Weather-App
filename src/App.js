@@ -136,7 +136,21 @@ const App = () => {
       });
     }
   }, [videoSrc]);
-  
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      if (window.innerHeight < 500) {
+        document.body.style.overflowY = "auto";
+      } else {
+        document.body.style.overflowY = "hidden";
+      }
+    };
+
+    window.addEventListener("resize", handleOrientationChange);
+    handleOrientationChange();
+    return () => window.removeEventListener("resize", handleOrientationChange);
+  }, []);
+
   return (
     <div className={`app-container ${theme}`}>
       <div className="background-container">
