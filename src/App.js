@@ -55,7 +55,7 @@ const App = () => {
 
   // Fetch city suggestions from OpenWeatherMap Geolocation API
   const fetchCitySuggestions = async (query) => {
-    if (!query) {
+    if (!query || query.length < 3) {
       setSuggestions([]);
       return;
     }
@@ -79,12 +79,13 @@ const App = () => {
   };
 
   const fetchWeather = async (cityName) => {
+    if (!cityName || cityName.length < 3) return; // Prevents short queries
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API_KEY}`
       );
       const data = await response.json();
-      
+
       if (data.cod === 200) {
         const temperature = Math.round(data.main.temp);
         const description = data.weather[0].description.toLowerCase();
