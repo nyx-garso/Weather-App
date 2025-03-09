@@ -1,5 +1,6 @@
 /* General Reset */
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -126,7 +127,7 @@ body, html {
 }
 
 .city-name {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: bold;
   color: #222;
 }
@@ -219,11 +220,21 @@ body, html {
 }
 
 /* Weather Theme Colors */
-.app-container.clear .weather-description { color: #05d5ff; }
-.app-container.cloudy .weather-description { color: #808080; }
-.app-container.rainy .weather-description { color: #00509e; }
-.app-container.snowy .weather-description { color: #73c2ea; }
-.app-container.misty .weather-description { color: #696969; }
+.app-container.clear .weather-description {
+  color: #05d5ff;
+}
+.app-container.cloudy .weather-description {
+  color: #808080;
+}
+.app-container.rainy .weather-description {
+  color: #00509e;
+}
+.app-container.snowy .weather-description {
+  color: #73c2ea;
+}
+.app-container.misty .weather-description {
+  color: #696969;
+}
 
 /*Color Ranges*/
 .color-range {
@@ -243,4 +254,28 @@ body, html {
 
 .wind-range {
   background: linear-gradient(to right, #62966266, #068b06b3, #228b22);
+}
+
+/* Gradient Sky Background (Used when video is loading) */
+.app-container.loading {
+  background: linear-gradient(to bottom, #4facfe, #00f2fe);
+}
+
+/* Credit Line with Blurry Background */
+.credit {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  color: white;
+  text-align: center;
+  opacity: 1;
+  width: auto;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+  backdrop-filter: blur(3px); /* Blurry highlight effect */
+  padding: 5px 15px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px); /* Blurry highlight effect */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Soft shadow for extra visibility */
 }
