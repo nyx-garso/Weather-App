@@ -180,15 +180,15 @@ html {
 
 /* Humidity Color Adjusts with Level */
 .humidity[data-level="low"] {
-  color: #6bc8f066; /* Light Blue */
+  color: #4951ed66; /* Light Blue */
 }
 
 .humidity[data-level="moderate"] {
-  color: #349ac6b3; /* Medium Blue */
+  color: #153b9a6e; /* Medium Blue */
 }
 
 .humidity[data-level="high"] {
-  color: #0d86ba; /* Deep Blue */
+  color: #050779; /* Deep Blue */
 }
 
 /* Dynamic Wind Speed Color */
@@ -249,7 +249,7 @@ html {
 }
 
 .humidity-range {
-  background: linear-gradient(to right, #6bc8f066, #349ac6b3, #0d86ba);
+  background: linear-gradient(to right, #4951ed66, #153b9a6e, #050779);
 }
 
 .wind-range {

@@ -76,8 +76,11 @@ const App = () => {
       );
       const data = await response.json();
 
-      if (Array.isArray(data) && data.length > 0) {
-        setSuggestions(data);
+      // Filter only valid city names with country codes
+      const validSuggestions = data.filter((city) => city.name && city.country);
+
+      if (validSuggestions.length > 0) {
+        setSuggestions(validSuggestions);
         setShowSuggestions(true);
       } else {
         setSuggestions([]);
@@ -85,7 +88,7 @@ const App = () => {
       }
     } catch (error) {
       console.error("Error fetching city suggestions:", error);
-      setSuggestions([]); // Reset suggestions if error occurs
+      setSuggestions([]);
       setShowSuggestions(false);
     }
   };
@@ -244,7 +247,6 @@ const App = () => {
                 key={index}
                 onClick={() => {
                   setCity(suggestion.name);
-                  fetchWeather(suggestion.name);
                   setShowSuggestions(false);
                 }}
               >
