@@ -62,7 +62,6 @@ const App = () => {
   const [theme, setTheme] = useState("clear");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   // Fetch city suggestions from OpenWeatherMap Geolocation API
   const fetchCitySuggestions = async (query) => {
