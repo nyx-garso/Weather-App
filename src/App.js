@@ -226,7 +226,7 @@ const App = () => {
         )}
       </div>
       <div className="weather-box">
-        <h1 className="app-title">Weather App</h1>
+        <h1 className="app-title">Quick Weather</h1>
         <input
           type="text"
           className="city-input"
