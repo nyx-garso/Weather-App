@@ -151,6 +151,18 @@ const App = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      fetchWeather(city);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+  setCity(suggestion.name);
+  setShowSuggestions(false);
+  fetchWeather(suggestion.name); // Trigger fetch when clicking suggestion
+};
+
   useEffect(() => {
     const video = document.querySelector(".background-media");
     const appContainer = document.querySelector(".app-container");
@@ -173,10 +185,6 @@ const App = () => {
       }
     };
   }, [videoSrc]);
-
-  useEffect(() => {
-    if (city) fetchWeather(city);
-  }, [city]);
 
   useEffect(() => {
     const video = document.querySelector(".background-media");
@@ -235,23 +243,21 @@ const App = () => {
             setCity(e.target.value);
             fetchCitySuggestions(e.target.value);
           }}
-          placeholder="Enter city name..."
+          onKeyDown={handleKeyDown}
+          placeholder="Enter city name and press Enter..."
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
 
         {showSuggestions && suggestions.length > 0 && (
           <ul className="suggestions-dropdown">
             {suggestions.map((suggestion, index) => (
               <li
-                key={index}
-                onClick={() => {
-                  setCity(suggestion.name);
-                  setShowSuggestions(false);
-                }}
-              >
-                {suggestion.name}, {suggestion.country}
-              </li>
+              key={index}
+              onClick={() => handleSuggestionClick(suggestion)}
+            >
+              {suggestion.name}, {suggestion.country}
+            </li>
+            
             ))}
           </ul>
         )}
